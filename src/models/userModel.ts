@@ -1,5 +1,5 @@
 import { Schema, model } from 'mongoose';
-import { TUser } from '../interfaces/userInterface';
+import { TUser, userModel } from '../interfaces/userInterface';
 
 const userSchema = new Schema<TUser>({
     userId: {
@@ -60,20 +60,26 @@ const userSchema = new Schema<TUser>({
     orders: [{
         productName: {
             type: String,
-            required: true
+            // required: true
         },
         price: {
             type: Number,
-            required: true
+            // required: true
         },
         quantity: {
             type: Number,
-            required: true
+            // required: true
         },
     }]
 })
 
+//creating a custom static method
+userSchema.statics.isUserExists = async function (userId: number) {
+    const existingUser = await User.findOne({ userId });
+    return existingUser;
+};
 
-const User = model<TUser>('User', userSchema);
+
+const User = model<TUser, userModel>('User', userSchema);
 
 export default User;
