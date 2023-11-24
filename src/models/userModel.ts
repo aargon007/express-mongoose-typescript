@@ -1,5 +1,7 @@
 import { Schema, model } from 'mongoose';
 import { TUser, userModel } from '../interfaces/userInterface';
+import bcrypt from 'bcrypt';
+import config from '../app/config';
 
 const userSchema = new Schema<TUser>({
     userId: {
@@ -73,12 +75,28 @@ const userSchema = new Schema<TUser>({
     }]
 })
 
+// pre save middleware
+userSchema.pre('save', async function (next) {
+    const user = this;
+    // hashing password and save into DB
+    user.password = await bcrypt.hash(
+        user.password,
+        Number(config.bcrypt_salt_rounds),
+    );
+    next();
+});
+
+// post save middleware
+// userSchema.post('save', function (doc, next) {
+//     doc.password = '';
+//     next();
+// });
+
 //creating a custom static method
 userSchema.statics.isUserExists = async function (userId: number) {
     const existingUser = await User.findOne({ userId });
     return existingUser;
 };
-
 
 const User = model<TUser, userModel>('User', userSchema);
 
