@@ -21,12 +21,11 @@ const createNewUser = async (req: Request, res: Response) => {
             username: result.username,
             fullName: result.fullName,
             age: result.age,
-            email:result.email,
-            isActive:result.isActive,
+            email: result.email,
+            isActive: result.isActive,
             hobbies: result.hobbies,
             address: result.address
         }
-    //    const resData = await User.findById(result._id).select("userId username");
         res.status(200).json({
             success: true,
             message: 'User created successfully!',
@@ -40,6 +39,29 @@ const createNewUser = async (req: Request, res: Response) => {
         });
     }
 };
+
+//get specific user
+const getSingleUser = async (req: Request, res: Response) => {
+    try {
+        const { userId } = req.params;
+        // find user based on userId
+        const result = await User.findOne({userId}, "-_id -orders -password");
+
+        res.status(200).json({
+            success: true,
+            message: "User fetched successfully!",
+            data: result,
+        });
+    } catch (err: any) {
+        res.status(500).json({
+            success: false,
+            message: err.message || 'something went wrong',
+            error: err,
+        });
+    }
+};
+
+
 
 // get all users
 const getAllUsers = async (req: Request, res: Response) => {
@@ -62,4 +84,4 @@ const getAllUsers = async (req: Request, res: Response) => {
 }
 
 
-export { getAllUsers , createNewUser};
+export { getAllUsers, createNewUser ,getSingleUser};

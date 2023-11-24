@@ -73,7 +73,9 @@ const userSchema = new Schema<TUser>({
             // required: true
         },
     }]
-})
+},
+    { versionKey: false }
+);
 
 // pre save middleware
 userSchema.pre('save', async function (next) {
@@ -87,10 +89,10 @@ userSchema.pre('save', async function (next) {
 });
 
 // post save middleware
-// userSchema.post('save', function (doc, next) {
-//     doc.password = '';
-//     next();
-// });
+userSchema.post('save', function (doc, next) {
+    doc.password = '';
+    next();
+});
 
 //creating a custom static method
 userSchema.statics.isUserExists = async function (userId: number) {
