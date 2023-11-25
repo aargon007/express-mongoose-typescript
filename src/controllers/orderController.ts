@@ -43,4 +43,49 @@ const updateOrderData = async (req: Request, res: Response) => {
     }
 };
 
-export { updateOrderData};
+// Retrieve all orders for a specific user
+const getAllOrders = async (req: Request, res: Response) => {
+    try {
+        const userId: number = parseInt(req.params.userId, 10);
+        // check if user existed
+        const userExists = await User.isUserExists(userId);
+        if (!userExists) {
+            return res.status(404).json(sampleErrMsg);
+        }
+        // find order data based on userId
+        const result = await User.aggregate([
+            { $match: { userId } },
+            {
+                $project: {
+                    _id: 0,
+                    orders: {
+                        $map: {
+                            input: '$orders',
+                            in: {
+                                $mergeObjects: [
+                                    '$$this',
+                                    { _id: '$$REMOVE' }
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        ]);
+        // if user is founded
+        res.status(200).json({
+            success: true,
+            message: "Order fetched successfully!",
+            data: result[0],
+        });
+
+    } catch (err) {
+        res.status(500).json({
+            success: false,
+            message: 'something went wrong',
+            error: err,
+        });
+    }
+};
+
+export { updateOrderData, getAllOrders };
