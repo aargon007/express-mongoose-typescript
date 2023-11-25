@@ -34,10 +34,10 @@ const createNewUser = async (req: Request, res: Response) => {
             message: 'User created successfully!',
             data: resData,
         });
-    } catch (err: any) {
+    } catch (err) {
         res.status(500).json({
             success: false,
-            message: err.message || 'something went wrong',
+            message: 'something went wrong',
             error: err,
         });
     }
@@ -62,10 +62,10 @@ const getSingleUser = async (req: Request, res: Response) => {
             data: result,
         });
 
-    } catch (err: any) {
+    } catch (err) {
         res.status(500).json({
             success: false,
-            message: err.message || 'something went wrong',
+            message: 'something went wrong',
             error: err,
         });
     }
@@ -95,10 +95,10 @@ const updateUser = async (req: Request, res: Response) => {
             message: "User updated successfully!",
             data: result,
         });
-    } catch (err: any) {
+    } catch (err) {
         res.status(500).json({
             success: false,
-            message: err.message || 'something went wrong',
+            message: 'something went wrong',
             error: err,
         });
     }
@@ -123,10 +123,10 @@ const deleteSpecificUser = async (req: Request, res: Response) => {
             data: null,
         });
 
-    } catch (err: any) {
+    } catch (err) {
         res.status(500).json({
             success: false,
-            message: err.message || 'something went wrong',
+            message: 'something went wrong',
             error: err,
         });
     }
@@ -143,10 +143,10 @@ const getAllUsers = async (req: Request, res: Response) => {
             message: 'Users fetched successfully!',
             data: users,
         });
-    } catch (err: any) {
+    } catch (err) {
         res.status(500).json({
             success: false,
-            message: err.message || 'something went wrong',
+            message: 'something went wrong',
             error: err,
         })
     }

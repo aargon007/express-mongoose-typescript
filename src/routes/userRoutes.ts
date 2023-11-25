@@ -1,6 +1,6 @@
 import express from 'express';
 import { createNewUser, getAllUsers, getSingleUser, updateUser, deleteSpecificUser } from "../controllers/userController"
-import {updateOrderData, getAllOrders } from "../controllers/orderController";
+import { updateOrderData, getAllOrders, getTotalOrdersCount } from "../controllers/orderController";
 
 // express router
 const router = express.Router();
@@ -12,7 +12,10 @@ router.get("/", getAllUsers);
 router.get("/:userId", getSingleUser);
 
 // get single user orders data
-router.get("/:userId/orders", getAllOrders)
+router.get("/:userId/orders", getAllOrders);
+
+// calculate single user price data
+router.get("/:userId/orders/total-price", getTotalOrdersCount)
 
 // create new user
 router.post("/", createNewUser);

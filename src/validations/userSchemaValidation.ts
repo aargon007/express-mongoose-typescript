@@ -1,4 +1,4 @@
-import {  z } from 'zod';
+import { z } from 'zod';
 
 const nameSchema = z.object({
     firstName: z.string().min(1)
@@ -19,7 +19,7 @@ export const OrderSchema = z.object({
     productName: z.string(),
     price: z.number().positive(),
     quantity: z.number().int().positive(),
-  });
+});
 
 export const userValidationSchema = z.object({
     userId: z.number(),

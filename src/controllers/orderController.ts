@@ -3,8 +3,6 @@ import User from "../models/userModel";
 import { OrderSchema } from '../validations/userSchemaValidation';
 import { TOrder } from "../interfaces/userInterface";
 import { sampleErrMsg } from '../utils/simpleErrorMsg';
-import bcrypt from 'bcrypt';
-import config from '../app/config';
 
 // add order for a user
 const updateOrderData = async (req: Request, res: Response) => {
@@ -59,6 +57,7 @@ const getAllOrders = async (req: Request, res: Response) => {
                 $project: {
                     _id: 0,
                     orders: {
+                        // remove _id from oreders item
                         $map: {
                             input: '$orders',
                             in: {
@@ -88,4 +87,50 @@ const getAllOrders = async (req: Request, res: Response) => {
     }
 };
 
-export { updateOrderData, getAllOrders };
+// Calculate Total Price of Orders for a Specific User
+const getTotalOrdersCount = async (req: Request, res: Response) => {
+    try {
+        const userId: number = parseInt(req.params.userId, 10);
+        // check if user existed
+        const userExists = await User.isUserExists(userId);
+        if (!userExists) {
+            return res.status(404).json(sampleErrMsg);
+        }
+        // calculate order price based on userId
+        const result = await User.aggregate([
+            { $match: { userId } },
+            {
+                $unwind: "$orders"
+            },
+            // group orders item and calculate sum of price
+            {
+                $group: {
+                    _id: null,
+                    totalPrice: { $sum: "$orders.price" }
+                }
+            },
+            // only show total price
+            {
+                $project: {
+                    _id: 0,
+                    totalPrice: { $round: ["$totalPrice", 2] }
+                }
+            }
+        ])
+        // if user is founded
+        res.status(200).json({
+            success: true,
+            message: "Total price calculated successfully!",
+            data: result[0],
+        });
+
+    } catch (err) {
+        res.status(500).json({
+            success: false,
+            message: 'something went wrong',
+            error: err,
+        });
+    }
+};
+
+export { updateOrderData, getAllOrders, getTotalOrdersCount };
