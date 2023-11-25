@@ -8,7 +8,7 @@ import { sampleErrMsg } from '../utils/simpleErrorMsg';
 const updateOrderData = async (req: Request, res: Response) => {
     try {
         const userId: number = parseInt(req.params.userId, 10);
-        const { orderData }: { orderData: TOrder } = req.body;
+        const orderData: TOrder = req.body;
         // validate the orderData using zod
         const zodParsedData = OrderSchema.parse(orderData);
         // check if user existed
@@ -53,23 +53,21 @@ const getAllOrders = async (req: Request, res: Response) => {
         // find order data based on userId
         const result = await User.aggregate([
             { $match: { userId } },
+            { $unwind: '$orders' },
             {
                 $project: {
                     _id: 0,
-                    orders: {
-                        // remove _id from oreders item
-                        $map: {
-                            input: '$orders',
-                            in: {
-                                $mergeObjects: [
-                                    '$$this',
-                                    { _id: '$$REMOVE' }
-                                ]
-                            }
-                        }
-                    }
+                    'orders.productName': 1,
+                    'orders.price': 1,
+                    "orders.quantity": 1
                 }
-            }
+            }, {
+                $group: {
+                    _id: '$_id',
+                    orders: { $push: '$orders' }
+                }
+            }, { $project: { _id: 0, orders: 1 } }
+
         ]);
         // if user is founded
         res.status(200).json({
@@ -121,7 +119,9 @@ const getTotalOrdersCount = async (req: Request, res: Response) => {
         res.status(200).json({
             success: true,
             message: "Total price calculated successfully!",
-            data: result[0],
+            data: result[0] ? result[0] : {
+                totalPrice: 0
+            }
         });
 
     } catch (err) {

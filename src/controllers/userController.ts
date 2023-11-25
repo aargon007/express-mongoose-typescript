@@ -9,7 +9,8 @@ import config from '../app/config';
 // create new user
 const createNewUser = async (req: Request, res: Response) => {
     try {
-        const { userData }: { userData: TUser } = req.body;
+        const userData: TUser = req.body;
+        
         // validate the userData using zod
         const zodParsedData = userValidationSchema.parse(userData);
         // check if user already exist
@@ -34,10 +35,10 @@ const createNewUser = async (req: Request, res: Response) => {
             message: 'User created successfully!',
             data: resData,
         });
-    } catch (err) {
+    } catch (err:any) {
         res.status(500).json({
             success: false,
-            message: 'something went wrong',
+            message: err.message || 'something went wrong',
             error: err,
         });
     }
@@ -62,10 +63,10 @@ const getSingleUser = async (req: Request, res: Response) => {
             data: result,
         });
 
-    } catch (err) {
+    } catch (err:any) {
         res.status(500).json({
             success: false,
-            message: 'something went wrong',
+            message: err.message || 'something went wrong',
             error: err,
         });
     }
@@ -75,7 +76,7 @@ const getSingleUser = async (req: Request, res: Response) => {
 const updateUser = async (req: Request, res: Response) => {
     try {
         const userId: number = parseInt(req.params.userId, 10);
-        const { userData }: { userData: TUser } = req.body;
+        const userData: TUser = req.body;
         // validate the userData using zod
         const zodParsedData = userValidationSchema.parse(userData);
         // check if user existed
@@ -95,10 +96,10 @@ const updateUser = async (req: Request, res: Response) => {
             message: "User updated successfully!",
             data: result,
         });
-    } catch (err) {
+    } catch (err:any) {
         res.status(500).json({
             success: false,
-            message: 'something went wrong',
+            message: err.message || 'something went wrong',
             error: err,
         });
     }
@@ -123,10 +124,10 @@ const deleteSpecificUser = async (req: Request, res: Response) => {
             data: null,
         });
 
-    } catch (err) {
+    } catch (err:any) {
         res.status(500).json({
             success: false,
-            message: 'something went wrong',
+            message: err.message || 'something went wrong',
             error: err,
         });
     }

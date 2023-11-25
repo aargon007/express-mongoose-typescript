@@ -17,6 +17,13 @@ https://apollo-level2-assignment2-nine.vercel.app
     npm run dev
     ```
 
+### .env.example
+    ```
+    PORT=
+    DB_URI=
+    BCRYPT_SALT_ROUNDS=
+    ```
+    
 ### API Endpoint
 ### 1. Create a new user :
 - Endpoint: **POST /api/users**
