@@ -1,5 +1,5 @@
 import express from 'express';
-import {createNewUser, getAllUsers, getSingleUser,updateUser} from "../controllers/userController"
+import { createNewUser, getAllUsers, getSingleUser, updateUser, deleteSpecificUser } from "../controllers/userController"
 
 // express router
 const router = express.Router();
@@ -15,5 +15,8 @@ router.get("/", getAllUsers);
 
 // get single user data
 router.get("/:userId", getSingleUser);
+
+// delete specific user
+router.delete("/:userId", deleteSpecificUser)
 
 export const UserRoutes = router;

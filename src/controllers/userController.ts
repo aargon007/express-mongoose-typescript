@@ -52,7 +52,7 @@ const getSingleUser = async (req: Request, res: Response) => {
         if (!userExists) {
             return res.status(404).json(sampleErrMsg);
         }
-        
+
         // find user based on userId
         const result = await User.findOne({ userId }, "-_id -orders -password");
         // if user is founded
@@ -86,15 +86,43 @@ const updateUser = async (req: Request, res: Response) => {
         // hashed updated password
         const hashedPassword = await bcrypt.hash(zodParsedData.password, Number(config.bcrypt_salt_rounds));
         zodParsedData.password = hashedPassword;
-        
+
         // if user exist then update it
-        const result = await User.findOneAndUpdate({userId}, zodParsedData, { new: true }).select("-orders -_id -password");
+        const result = await User.findOneAndUpdate({ userId }, zodParsedData, { new: true }).select("-orders -_id -password");
         // send response
         res.status(200).json({
             success: true,
             message: "User updated successfully!",
             data: result,
         });
+    } catch (err: any) {
+        res.status(500).json({
+            success: false,
+            message: err.message || 'something went wrong',
+            error: err,
+        });
+    }
+};
+
+// delete specific user
+const deleteSpecificUser = async (req: Request, res: Response) => {
+    try {
+        const userId: number = parseInt(req.params.userId, 10);
+        // check if user existed
+        const userExists = await User.isUserExists(userId);
+        if (!userExists) {
+            return res.status(404).json(sampleErrMsg);
+        }
+
+        // find user based on userId
+        const result = await User.deleteOne({ userId });
+        // if user is founded
+        res.status(200).json({
+            success: true,
+            message: "User deleted successfully!",
+            data: null,
+        });
+
     } catch (err: any) {
         res.status(500).json({
             success: false,
@@ -125,4 +153,4 @@ const getAllUsers = async (req: Request, res: Response) => {
 }
 
 
-export { getAllUsers, createNewUser, getSingleUser,updateUser };
+export { getAllUsers, createNewUser, getSingleUser, updateUser, deleteSpecificUser };
